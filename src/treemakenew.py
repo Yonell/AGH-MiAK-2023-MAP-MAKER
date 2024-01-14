@@ -1,5 +1,4 @@
 from ply import yacc
-import ply.lex as lex
 
 from src.calclex import tokens
 class Map:
@@ -170,8 +169,8 @@ def execute(list_of_instructions, local_objects = {}):
                                 global_objects[instruction[2]].add_object(global_objects[instruction[1]].objects[i][j][k], x_coord + i, y_coord + j)
                 else:
                     global_objects[instruction[2]].add_object(global_objects[instruction[1]], x_coord, y_coord)
-        elif instruction[0] == "render":
-            pass                                                                # TODO: render
+        elif instruction[0] == "render":   #(flag, name, renderstring, coordinates)
+            pass
         elif instruction[0] == "for":
             execute_for_loop(instruction[3], instruction[1], instruction[2][0], instruction[2][1], local_objects)
     pass
