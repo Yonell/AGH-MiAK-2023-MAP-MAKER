@@ -22,14 +22,26 @@ class Map:
 class Road:
     def __init__(self):
         pass
+    def __str__(self):
+        return f'Road'
+    def __repr__(self):
+        return str(self)
 class River:
     def __init__(self):
         pass
+    def __str__(self):
+        return f'River'
+    def __repr__(self):
+        return str(self)
 class City:
     def __init__(self, name, size):
         self.name = name
         self.size = size
         pass
+    def __str__(self):
+        return f'City({self.name})'
+    def __repr__(self):
+        return str(self)
 class Terrain:
     def __init__(self, base):
         self.base = base
@@ -39,25 +51,26 @@ class Terrain:
     def __repr__(self):
         return str(self)
 
-names = []
-objects = {}
 
-def execute(list_of_instructions):
+names = []
+global_objects = {}
+
+def execute(list_of_instructions, local_objects = {}):
     for instruction in list_of_instructions:
         if instruction[0] == "create":
             if instruction[2] in names:
                 raise Exception("Name already taken")
             else:
                 if instruction[1] == "map":
-                    objects[instruction[2]] = Map(instruction[3]['width'], instruction[3]['height'], instruction[3]['base'])
+                    global_objects[instruction[2]] = Map(instruction[3]['width'], instruction[3]['height'], instruction[3]['base'])
                 elif instruction[1] == "road":
-                    objects[instruction[2]] = Road()
+                    global_objects[instruction[2]] = Road()
                 elif instruction[1] == "river":
-                    objects[instruction[2]] = River()
+                    global_objects[instruction[2]] = River()
                 elif instruction[1] == "city":
-                    objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
+                    global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
                 elif instruction[1] == "terrain":
-                    objects[instruction[2]] = Terrain(instruction[3]['base'])
+                    global_objects[instruction[2]] = Terrain(instruction[3]['base'])
                 else:
                     raise Exception("Unknown type")
                 names.append(instruction[2])
@@ -66,14 +79,27 @@ def execute(list_of_instructions):
             if instruction[3] not in names:
                 raise Exception("Name not found")
             else:
+                x_coord = instruction[4][0]
+                y_coord = instruction[4][1]
+                if type(x_coord) == tuple:
+                    if x_coord[0] == "varname":
+                        x_coord = local_objects[x_coord[1]]
+                        if x_coord == None:
+                            x_coord = global_objects[x_coord[1]]
+                if type(y_coord) == tuple:
+                    if y_coord[0] == "varname":
+                        y_coord = local_objects[y_coord[1]]
+                        if y_coord == None:
+                            y_coord = global_objects[y_coord[1]]
+
                 if instruction[1] == "road":
-                    objects[instruction[3]].add_object(Road(), instruction[4][0], instruction[4][1])
+                    global_objects[instruction[3]].add_object(Road(), x_coord, y_coord)
                 elif instruction[1] == "river":
-                    objects[instruction[3]].add_object(River(), instruction[4][0], instruction[4][1])
+                    global_objects[instruction[3]].add_object(River(), x_coord, y_coord)
                 elif instruction[1] == "city":
-                    objects[instruction[3]].add_object(City(None, instruction[2]['size']), instruction[4][0], instruction[4][1])
+                    global_objects[instruction[3]].add_object(City(None, instruction[2]['size']), x_coord, y_coord)
                 elif instruction[1] == "terrain":
-                    objects[instruction[3]].edit_terrain(instruction[4][0], instruction[4][1], Terrain(instruction[2]['base']))
+                    global_objects[instruction[3]].edit_terrain(x_coord, y_coord, Terrain(instruction[2]['base']))
                 else:
                     raise Exception("Unknown type")
         elif instruction[0] == "place_new_named":  #(flag, type, name, args, mapname, coordinates)
@@ -82,22 +108,35 @@ def execute(list_of_instructions):
             elif instruction[4] not in names:
                 raise Exception("Map name not found")
             else:
+                x_coord = instruction[5][0]
+                y_coord = instruction[5][1]
+                if type(x_coord) == tuple:
+                    if x_coord[0] == "varname":
+                        x_coord = local_objects[x_coord[1]]
+                        if x_coord == None:
+                            x_coord = global_objects[x_coord[1]]
+                if type(y_coord) == tuple:
+                    if y_coord[0] == "varname":
+                        y_coord = local_objects[y_coord[1]]
+                        if y_coord == None:
+                            y_coord = global_objects[y_coord[1]]
+
                 if instruction[1] == "road":
-                    objects[instruction[2]] = Road()
+                    global_objects[instruction[2]] = Road()
                     names.append(instruction[2])
-                    objects[instruction[4]].add_object(objects[instruction[2]], instruction[5][0], instruction[5][1])
+                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
                 elif instruction[1] == "river":
-                    objects[instruction[2]] = River()
+                    global_objects[instruction[2]] = River()
                     names.append(instruction[2])
-                    objects[instruction[4]].add_object(objects[instruction[2]], instruction[5][0], instruction[5][1])
+                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
                 elif instruction[1] == "city":
-                    objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
+                    global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
                     names.append(instruction[2])
-                    objects[instruction[4]].add_object(objects[instruction[2]], instruction[5][0], instruction[5][1])
+                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
                 elif instruction[1] == "terrain":
-                    objects[instruction[2]] = Terrain(instruction[3]['base'])
+                    global_objects[instruction[2]] = Terrain(instruction[3]['base'])
                     names.append(instruction[2])
-                    objects[instruction[4]].terrain[instruction[5][0]][instruction[5][1]] = objects[instruction[2]]
+                    global_objects[instruction[4]].terrain[x_coord][y_coord] = global_objects[instruction[2]]
                 else:
                     raise Exception("Unknown type")
         elif instruction[0] == "place_existing": #(flag, name, mapname, coordinates)
@@ -106,20 +145,46 @@ def execute(list_of_instructions):
             elif instruction[2] not in names:
                 raise Exception("Map name not found")
             else:
-                if type(objects[instruction[1]]) == Terrain:
-                    objects[instruction[2]].edit_terrain(instruction[3][0], instruction[3][1], objects[instruction[1]].base)
-                elif type(objects[instruction[1]]) == Map:
-                    for i in range(len(objects[instruction[1]].terrain)):
-                        for j in range(len(objects[instruction[1]].terrain[i])):
-                            objects[instruction[2]].edit_terrain(instruction[3][0]+i, instruction[3][1]+j, objects[instruction[1]].terrain[i][j])
-                    for i in range(len(objects[instruction[1]].objects)):
-                        for j in range(len(objects[instruction[1]].objects[i])):
-                            for k in range(len(objects[instruction[1]].objects[i][j])):
-                                objects[instruction[2]].add_object(objects[instruction[1]].objects[i][j][k], instruction[3][0]+i, instruction[3][1]+j)
+                x_coord = instruction[3][0]
+                y_coord = instruction[3][1]
+                if type(x_coord) == tuple:
+                    if x_coord[0] == "varname":
+                        x_coord = local_objects[x_coord[1]]
+                        if x_coord == None:
+                            x_coord = global_objects[x_coord[1]]
+                if type(y_coord) == tuple:
+                    if y_coord[0] == "varname":
+                        y_coord = local_objects[y_coord[1]]
+                        if y_coord == None:
+                            y_coord = global_objects[y_coord[1]]
+
+                if type(global_objects[instruction[1]]) == Terrain:
+                    global_objects[instruction[2]].edit_terrain(x_coord, y_coord, global_objects[instruction[1]].base)
+                elif type(global_objects[instruction[1]]) == Map:
+                    for i in range(len(global_objects[instruction[1]].terrain)):
+                        for j in range(len(global_objects[instruction[1]].terrain[i])):
+                            global_objects[instruction[2]].edit_terrain(x_coord + i, y_coord + j, global_objects[instruction[1]].terrain[i][j])
+                    for i in range(len(global_objects[instruction[1]].objects)):
+                        for j in range(len(global_objects[instruction[1]].objects[i])):
+                            for k in range(len(global_objects[instruction[1]].objects[i][j])):
+                                global_objects[instruction[2]].add_object(global_objects[instruction[1]].objects[i][j][k], x_coord + i, y_coord + j)
                 else:
-                    objects[instruction[2]].add_object(objects[instruction[1]], instruction[3][0], instruction[3][1])
+                    global_objects[instruction[2]].add_object(global_objects[instruction[1]], x_coord, y_coord)
         elif instruction[0] == "render":
             pass                                                                # TODO: render
+        elif instruction[0] == "for":
+            execute_for_loop(instruction[3], instruction[1], instruction[2][0], instruction[2][1], local_objects)
+    pass
+
+def execute_for_loop(list_of_instructions, varname, start, stop, local_objects):
+    if(type(start) != int or type(stop) != int):
+        raise Exception("For loop start and stop must be integers")
+    for i in range(start, stop):
+        new_local_objects = {}
+        for key in local_objects:
+            new_local_objects[key] = local_objects[key]
+        new_local_objects[varname] = i
+        execute(list_of_instructions, new_local_objects)
     pass
 
 def p_start(p):
@@ -196,6 +261,16 @@ def p_instruction_render(p):                                                    
     p[0].append(p[2])
     p[0].append(p[3])
     p[0].append(p[4])
+    pass
+
+
+def p_instruction_for(p):                                                        #(flag, variable, range, instructions)
+    '''instruction : FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD'''
+    p[0] = []
+    p[0].append("for")
+    p[0].append(p[2])
+    p[0].append(p[3])
+    p[0].append(p[5])
     pass
 
 
@@ -291,7 +366,7 @@ def p_list_item_iterator(p):
 
 
 def p_coordinates(p):
-    '''coordinates : LPAREN NUMBER COMMA NUMBER RPAREN'''
+    '''coordinates : LPAREN value COMMA value RPAREN'''
     p[0] = (p[2], p[4])
     pass
 
@@ -314,8 +389,13 @@ if __name__ == '__main__':
         Create map myMap2 (width: 8, height: 2, base: \"grass\")\n\
         Place terrain (base: \"grass\") on myMap2 (4, 1)\n\
         Create city myCity (size: \"small\")\n\
-        Place myCity on myMap2 (3, 1)\n\
-        Place road () on myMap2 (0,0)\n\
+        Place myCity on myMap (3, 1)\n\
+        Place road () on myMap2 (7,0)\n\
+        for i (0, 4)\n\
+            for j (0, 7)\n \
+                Place road () on myMap (i,j)\n\
+            endfor\n\
+        endfor\n\
         Create road myRoad ()\n\
         Place myRoad on myMap2 (0,0)\n\
         Place myMap2 on myMap (1,2)\n\

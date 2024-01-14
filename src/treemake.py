@@ -147,7 +147,7 @@ def p_instruction_place_existing(p):
         y_add = p[5][1]
         for x in range(objects[p[2]].width):
             for y in range(objects[p[2]].height):
-                for i in objects[p[2]].objects[x][y]:
+                for i in objects[p[2]].global_objects[x][y]:
                     if x + x_add < objects[p[4]].width and y + y_add < objects[p[4]].height:
                         objects[p[4]].add_object(i, x + x_add, y + y_add)
                 objects[p[4]].edit_terrain(x + x_add, y + y_add, objects[p[2]].terrain[x][y])
