@@ -150,6 +150,7 @@ def p_instruction_place_existing(p):
                 for i in objects[p[2]].objects[x][y]:
                     if x + x_add < objects[p[4]].width and y + y_add < objects[p[4]].height:
                         objects[p[4]].add_object(i, x + x_add, y + y_add)
+                objects[p[4]].edit_terrain(x + x_add, y + y_add, objects[p[2]].terrain[x][y])
     pass
 
 
@@ -271,8 +272,8 @@ if __name__ == '__main__':
         Place terrain (base: \"grass\") on myMap2 (4, 1)\n\
         Create city myCity (size: \"small\")\n\
         Place myCity on myMap2 (3, 1)\n\
-        Place road (list: [(1,3), (2,2), (2,3)]) on myMap2 (0,0)\n\
-        Create road myRoad (list: [(1,1), (3,4)])\n\
+        Place road () on myMap2 (0,0)\n\
+        Create road myRoad ()\n\
         Place myRoad on myMap2 (0,0)\n\
         Place myMap2 on myMap (1,2)\n\
         Render myMap as \"./mymap.png\" (1920,1080)\n\
