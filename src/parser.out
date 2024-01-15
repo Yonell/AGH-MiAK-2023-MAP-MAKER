@@ -21,66 +21,68 @@ Rule 15    type -> TERRAIN_KEYWORD
 Rule 16    type -> CITY_KEYWORD
 Rule 17    type -> ROAD_KEYWORD
 Rule 18    type -> RIVER_KEYWORD
-Rule 19    construction_arguments -> LPAREN argument_iterator RPAREN
-Rule 20    argument_iterator -> argument
-Rule 21    argument_iterator -> argument_iterator COMMA argument
-Rule 22    argument_iterator -> empty
-Rule 23    argument -> VARNAME_ARGNAME COLON value
-Rule 24    value -> NUMBER
-Rule 25    value -> STRING
-Rule 26    value -> list
-Rule 27    value -> coordinates
-Rule 28    value -> VARNAME_ARGNAME
-Rule 29    list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN
-Rule 30    list_item_iterator -> value
-Rule 31    list_item_iterator -> list_item_iterator COMMA value
-Rule 32    list_item_iterator -> empty
-Rule 33    coordinates -> LPAREN value COMMA value RPAREN
-Rule 34    empty -> <empty>
+Rule 19    type -> MOUNTAIN_KEYWORD
+Rule 20    construction_arguments -> LPAREN argument_iterator RPAREN
+Rule 21    argument_iterator -> argument
+Rule 22    argument_iterator -> argument_iterator COMMA argument
+Rule 23    argument_iterator -> empty
+Rule 24    argument -> VARNAME_ARGNAME COLON value
+Rule 25    value -> NUMBER
+Rule 26    value -> STRING
+Rule 27    value -> list
+Rule 28    value -> coordinates
+Rule 29    value -> VARNAME_ARGNAME
+Rule 30    list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN
+Rule 31    list_item_iterator -> value
+Rule 32    list_item_iterator -> list_item_iterator COMMA value
+Rule 33    list_item_iterator -> empty
+Rule 34    coordinates -> LPAREN value COMMA value RPAREN
+Rule 35    empty -> <empty>
 
 Terminals, with rules where they appear
 
 AS_KEYWORD           : 10
 CITY_KEYWORD         : 16
-COLON                : 23
-COMMA                : 21 31 33
+COLON                : 24
+COMMA                : 22 32 34
 CREATE_KEYWORD       : 4
 ENDFOR_KEYWORD       : 9
 EOF                  : 1
 FOR_KEYWORD          : 9
-LPAREN               : 19 33
-LSQUAREPAREN         : 29
+LPAREN               : 20 34
+LSQUAREPAREN         : 30
 MAP_KEYWORD          : 14
+MOUNTAIN_KEYWORD     : 19
 NEWLINE              : 2 9
-NUMBER               : 24
+NUMBER               : 25
 ON_KEYWORD           : 5 6 7
 PLACE_KEYWORD        : 5 6 7
 RENDER_KEYWORD       : 8
 RIVER_KEYWORD        : 18
 ROAD_KEYWORD         : 17
-RPAREN               : 19 33
-RSQUAREPAREN         : 29
-STRING               : 10 25
+RPAREN               : 20 34
+RSQUAREPAREN         : 30
+STRING               : 10 26
 TERRAIN_KEYWORD      : 15
-VARNAME_ARGNAME      : 4 5 6 6 7 7 8 9 23 28
+VARNAME_ARGNAME      : 4 5 6 6 7 7 8 9 24 29
 error                : 
 
 Nonterminals, with rules where they appear
 
-argument             : 20 21
-argument_iterator    : 19 21
+argument             : 21 22
+argument_iterator    : 20 22
 construction_arguments : 4 5 6
-coordinates          : 5 6 7 9 12 27
-empty                : 3 11 13 22 32
+coordinates          : 5 6 7 9 12 28
+empty                : 3 11 13 23 33
 instruction          : 2
 instruction_iterator : 1 2 9
-list                 : 26
-list_item_iterator   : 29 31
+list                 : 27
+list_item_iterator   : 30 32
 optional_coordinates : 8
 optional_render_string : 8
 start                : 0
 type                 : 4 5 6
-value                : 23 30 31 33 33
+value                : 24 31 32 34 34
 
 Parsing method: LALR
 
@@ -90,13 +92,13 @@ state 0
     (1) start -> . instruction_iterator EOF
     (2) instruction_iterator -> . instruction_iterator instruction NEWLINE
     (3) instruction_iterator -> . empty
-    (34) empty -> .
+    (35) empty -> .
 
-    EOF             reduce using rule 34 (empty -> .)
-    CREATE_KEYWORD  reduce using rule 34 (empty -> .)
-    PLACE_KEYWORD   reduce using rule 34 (empty -> .)
-    RENDER_KEYWORD  reduce using rule 34 (empty -> .)
-    FOR_KEYWORD     reduce using rule 34 (empty -> .)
+    EOF             reduce using rule 35 (empty -> .)
+    CREATE_KEYWORD  reduce using rule 35 (empty -> .)
+    PLACE_KEYWORD   reduce using rule 35 (empty -> .)
+    RENDER_KEYWORD  reduce using rule 35 (empty -> .)
+    FOR_KEYWORD     reduce using rule 35 (empty -> .)
 
     start                          shift and go to state 1
     instruction_iterator           shift and go to state 2
@@ -161,12 +163,14 @@ state 6
     (16) type -> . CITY_KEYWORD
     (17) type -> . ROAD_KEYWORD
     (18) type -> . RIVER_KEYWORD
+    (19) type -> . MOUNTAIN_KEYWORD
 
     MAP_KEYWORD     shift and go to state 12
     TERRAIN_KEYWORD shift and go to state 13
     CITY_KEYWORD    shift and go to state 14
     ROAD_KEYWORD    shift and go to state 15
     RIVER_KEYWORD   shift and go to state 16
+    MOUNTAIN_KEYWORD shift and go to state 17
 
     type                           shift and go to state 11
 
@@ -180,28 +184,30 @@ state 7
     (16) type -> . CITY_KEYWORD
     (17) type -> . ROAD_KEYWORD
     (18) type -> . RIVER_KEYWORD
+    (19) type -> . MOUNTAIN_KEYWORD
 
-    VARNAME_ARGNAME shift and go to state 18
+    VARNAME_ARGNAME shift and go to state 19
     MAP_KEYWORD     shift and go to state 12
     TERRAIN_KEYWORD shift and go to state 13
     CITY_KEYWORD    shift and go to state 14
     ROAD_KEYWORD    shift and go to state 15
     RIVER_KEYWORD   shift and go to state 16
+    MOUNTAIN_KEYWORD shift and go to state 17
 
-    type                           shift and go to state 17
+    type                           shift and go to state 18
 
 state 8
 
     (8) instruction -> RENDER_KEYWORD . VARNAME_ARGNAME optional_render_string optional_coordinates
 
-    VARNAME_ARGNAME shift and go to state 19
+    VARNAME_ARGNAME shift and go to state 20
 
 
 state 9
 
     (9) instruction -> FOR_KEYWORD . VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD
 
-    VARNAME_ARGNAME shift and go to state 20
+    VARNAME_ARGNAME shift and go to state 21
 
 
 state 10
@@ -220,7 +226,7 @@ state 11
 
     (4) instruction -> CREATE_KEYWORD type . VARNAME_ARGNAME construction_arguments
 
-    VARNAME_ARGNAME shift and go to state 21
+    VARNAME_ARGNAME shift and go to state 22
 
 
 state 12
@@ -265,117 +271,125 @@ state 16
 
 state 17
 
-    (5) instruction -> PLACE_KEYWORD type . construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
-    (6) instruction -> PLACE_KEYWORD type . VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
-    (19) construction_arguments -> . LPAREN argument_iterator RPAREN
+    (19) type -> MOUNTAIN_KEYWORD .
 
-    VARNAME_ARGNAME shift and go to state 23
-    LPAREN          shift and go to state 24
+    VARNAME_ARGNAME reduce using rule 19 (type -> MOUNTAIN_KEYWORD .)
+    LPAREN          reduce using rule 19 (type -> MOUNTAIN_KEYWORD .)
 
-    construction_arguments         shift and go to state 22
 
 state 18
 
-    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME . ON_KEYWORD VARNAME_ARGNAME coordinates
+    (5) instruction -> PLACE_KEYWORD type . construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
+    (6) instruction -> PLACE_KEYWORD type . VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
+    (20) construction_arguments -> . LPAREN argument_iterator RPAREN
 
-    ON_KEYWORD      shift and go to state 25
+    VARNAME_ARGNAME shift and go to state 24
+    LPAREN          shift and go to state 25
 
+    construction_arguments         shift and go to state 23
 
 state 19
+
+    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME . ON_KEYWORD VARNAME_ARGNAME coordinates
+
+    ON_KEYWORD      shift and go to state 26
+
+
+state 20
 
     (8) instruction -> RENDER_KEYWORD VARNAME_ARGNAME . optional_render_string optional_coordinates
     (10) optional_render_string -> . AS_KEYWORD STRING
     (11) optional_render_string -> . empty
-    (34) empty -> .
+    (35) empty -> .
 
-    AS_KEYWORD      shift and go to state 27
-    LPAREN          reduce using rule 34 (empty -> .)
-    NEWLINE         reduce using rule 34 (empty -> .)
+    AS_KEYWORD      shift and go to state 28
+    LPAREN          reduce using rule 35 (empty -> .)
+    NEWLINE         reduce using rule 35 (empty -> .)
 
-    optional_render_string         shift and go to state 26
-    empty                          shift and go to state 28
-
-state 20
-
-    (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME . coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
-
-    LPAREN          shift and go to state 30
-
-    coordinates                    shift and go to state 29
+    optional_render_string         shift and go to state 27
+    empty                          shift and go to state 29
 
 state 21
 
-    (4) instruction -> CREATE_KEYWORD type VARNAME_ARGNAME . construction_arguments
-    (19) construction_arguments -> . LPAREN argument_iterator RPAREN
+    (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME . coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
 
-    LPAREN          shift and go to state 24
+    LPAREN          shift and go to state 31
 
-    construction_arguments         shift and go to state 31
+    coordinates                    shift and go to state 30
 
 state 22
 
-    (5) instruction -> PLACE_KEYWORD type construction_arguments . ON_KEYWORD VARNAME_ARGNAME coordinates
+    (4) instruction -> CREATE_KEYWORD type VARNAME_ARGNAME . construction_arguments
+    (20) construction_arguments -> . LPAREN argument_iterator RPAREN
 
-    ON_KEYWORD      shift and go to state 32
+    LPAREN          shift and go to state 25
 
+    construction_arguments         shift and go to state 32
 
 state 23
 
-    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME . construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
-    (19) construction_arguments -> . LPAREN argument_iterator RPAREN
+    (5) instruction -> PLACE_KEYWORD type construction_arguments . ON_KEYWORD VARNAME_ARGNAME coordinates
 
-    LPAREN          shift and go to state 24
+    ON_KEYWORD      shift and go to state 33
 
-    construction_arguments         shift and go to state 33
 
 state 24
 
-    (19) construction_arguments -> LPAREN . argument_iterator RPAREN
-    (20) argument_iterator -> . argument
-    (21) argument_iterator -> . argument_iterator COMMA argument
-    (22) argument_iterator -> . empty
-    (23) argument -> . VARNAME_ARGNAME COLON value
-    (34) empty -> .
+    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME . construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates
+    (20) construction_arguments -> . LPAREN argument_iterator RPAREN
 
-    VARNAME_ARGNAME shift and go to state 37
-    RPAREN          reduce using rule 34 (empty -> .)
-    COMMA           reduce using rule 34 (empty -> .)
+    LPAREN          shift and go to state 25
 
-    argument_iterator              shift and go to state 34
-    argument                       shift and go to state 35
-    empty                          shift and go to state 36
+    construction_arguments         shift and go to state 34
 
 state 25
 
-    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD . VARNAME_ARGNAME coordinates
+    (20) construction_arguments -> LPAREN . argument_iterator RPAREN
+    (21) argument_iterator -> . argument
+    (22) argument_iterator -> . argument_iterator COMMA argument
+    (23) argument_iterator -> . empty
+    (24) argument -> . VARNAME_ARGNAME COLON value
+    (35) empty -> .
 
     VARNAME_ARGNAME shift and go to state 38
+    RPAREN          reduce using rule 35 (empty -> .)
+    COMMA           reduce using rule 35 (empty -> .)
 
+    argument_iterator              shift and go to state 35
+    argument                       shift and go to state 36
+    empty                          shift and go to state 37
 
 state 26
+
+    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD . VARNAME_ARGNAME coordinates
+
+    VARNAME_ARGNAME shift and go to state 39
+
+
+state 27
 
     (8) instruction -> RENDER_KEYWORD VARNAME_ARGNAME optional_render_string . optional_coordinates
     (12) optional_coordinates -> . coordinates
     (13) optional_coordinates -> . empty
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
-    (34) empty -> .
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
+    (35) empty -> .
 
-    LPAREN          shift and go to state 30
-    NEWLINE         reduce using rule 34 (empty -> .)
+    LPAREN          shift and go to state 31
+    NEWLINE         reduce using rule 35 (empty -> .)
 
-    optional_coordinates           shift and go to state 39
-    coordinates                    shift and go to state 40
-    empty                          shift and go to state 41
+    optional_coordinates           shift and go to state 40
+    coordinates                    shift and go to state 41
+    empty                          shift and go to state 42
 
-state 27
+state 28
 
     (10) optional_render_string -> AS_KEYWORD . STRING
 
-    STRING          shift and go to state 42
+    STRING          shift and go to state 43
 
 
-state 28
+state 29
 
     (11) optional_render_string -> empty .
 
@@ -383,118 +397,118 @@ state 28
     NEWLINE         reduce using rule 11 (optional_render_string -> empty .)
 
 
-state 29
+state 30
 
     (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME coordinates . NEWLINE instruction_iterator ENDFOR_KEYWORD
 
-    NEWLINE         shift and go to state 43
+    NEWLINE         shift and go to state 44
 
-
-state 30
-
-    (33) coordinates -> LPAREN . value COMMA value RPAREN
-    (24) value -> . NUMBER
-    (25) value -> . STRING
-    (26) value -> . list
-    (27) value -> . coordinates
-    (28) value -> . VARNAME_ARGNAME
-    (29) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
-
-    NUMBER          shift and go to state 45
-    STRING          shift and go to state 46
-    VARNAME_ARGNAME shift and go to state 49
-    LSQUAREPAREN    shift and go to state 50
-    LPAREN          shift and go to state 30
-
-    value                          shift and go to state 44
-    list                           shift and go to state 47
-    coordinates                    shift and go to state 48
 
 state 31
+
+    (34) coordinates -> LPAREN . value COMMA value RPAREN
+    (25) value -> . NUMBER
+    (26) value -> . STRING
+    (27) value -> . list
+    (28) value -> . coordinates
+    (29) value -> . VARNAME_ARGNAME
+    (30) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
+
+    NUMBER          shift and go to state 46
+    STRING          shift and go to state 47
+    VARNAME_ARGNAME shift and go to state 50
+    LSQUAREPAREN    shift and go to state 51
+    LPAREN          shift and go to state 31
+
+    value                          shift and go to state 45
+    list                           shift and go to state 48
+    coordinates                    shift and go to state 49
+
+state 32
 
     (4) instruction -> CREATE_KEYWORD type VARNAME_ARGNAME construction_arguments .
 
     NEWLINE         reduce using rule 4 (instruction -> CREATE_KEYWORD type VARNAME_ARGNAME construction_arguments .)
 
 
-state 32
+state 33
 
     (5) instruction -> PLACE_KEYWORD type construction_arguments ON_KEYWORD . VARNAME_ARGNAME coordinates
 
-    VARNAME_ARGNAME shift and go to state 51
-
-
-state 33
-
-    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments . ON_KEYWORD VARNAME_ARGNAME coordinates
-
-    ON_KEYWORD      shift and go to state 52
+    VARNAME_ARGNAME shift and go to state 52
 
 
 state 34
 
-    (19) construction_arguments -> LPAREN argument_iterator . RPAREN
-    (21) argument_iterator -> argument_iterator . COMMA argument
+    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments . ON_KEYWORD VARNAME_ARGNAME coordinates
 
-    RPAREN          shift and go to state 53
-    COMMA           shift and go to state 54
+    ON_KEYWORD      shift and go to state 53
 
 
 state 35
 
-    (20) argument_iterator -> argument .
+    (20) construction_arguments -> LPAREN argument_iterator . RPAREN
+    (22) argument_iterator -> argument_iterator . COMMA argument
 
-    RPAREN          reduce using rule 20 (argument_iterator -> argument .)
-    COMMA           reduce using rule 20 (argument_iterator -> argument .)
+    RPAREN          shift and go to state 54
+    COMMA           shift and go to state 55
 
 
 state 36
 
-    (22) argument_iterator -> empty .
+    (21) argument_iterator -> argument .
 
-    RPAREN          reduce using rule 22 (argument_iterator -> empty .)
-    COMMA           reduce using rule 22 (argument_iterator -> empty .)
+    RPAREN          reduce using rule 21 (argument_iterator -> argument .)
+    COMMA           reduce using rule 21 (argument_iterator -> argument .)
 
 
 state 37
 
-    (23) argument -> VARNAME_ARGNAME . COLON value
+    (23) argument_iterator -> empty .
 
-    COLON           shift and go to state 55
+    RPAREN          reduce using rule 23 (argument_iterator -> empty .)
+    COMMA           reduce using rule 23 (argument_iterator -> empty .)
 
 
 state 38
 
-    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD VARNAME_ARGNAME . coordinates
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
+    (24) argument -> VARNAME_ARGNAME . COLON value
 
-    LPAREN          shift and go to state 30
+    COLON           shift and go to state 56
 
-    coordinates                    shift and go to state 56
 
 state 39
+
+    (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD VARNAME_ARGNAME . coordinates
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
+
+    LPAREN          shift and go to state 31
+
+    coordinates                    shift and go to state 57
+
+state 40
 
     (8) instruction -> RENDER_KEYWORD VARNAME_ARGNAME optional_render_string optional_coordinates .
 
     NEWLINE         reduce using rule 8 (instruction -> RENDER_KEYWORD VARNAME_ARGNAME optional_render_string optional_coordinates .)
 
 
-state 40
+state 41
 
     (12) optional_coordinates -> coordinates .
 
     NEWLINE         reduce using rule 12 (optional_coordinates -> coordinates .)
 
 
-state 41
+state 42
 
     (13) optional_coordinates -> empty .
 
     NEWLINE         reduce using rule 13 (optional_coordinates -> empty .)
 
 
-state 42
+state 43
 
     (10) optional_render_string -> AS_KEYWORD STRING .
 
@@ -502,165 +516,165 @@ state 42
     NEWLINE         reduce using rule 10 (optional_render_string -> AS_KEYWORD STRING .)
 
 
-state 43
+state 44
 
     (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE . instruction_iterator ENDFOR_KEYWORD
     (2) instruction_iterator -> . instruction_iterator instruction NEWLINE
     (3) instruction_iterator -> . empty
-    (34) empty -> .
+    (35) empty -> .
 
-    ENDFOR_KEYWORD  reduce using rule 34 (empty -> .)
-    CREATE_KEYWORD  reduce using rule 34 (empty -> .)
-    PLACE_KEYWORD   reduce using rule 34 (empty -> .)
-    RENDER_KEYWORD  reduce using rule 34 (empty -> .)
-    FOR_KEYWORD     reduce using rule 34 (empty -> .)
+    ENDFOR_KEYWORD  reduce using rule 35 (empty -> .)
+    CREATE_KEYWORD  reduce using rule 35 (empty -> .)
+    PLACE_KEYWORD   reduce using rule 35 (empty -> .)
+    RENDER_KEYWORD  reduce using rule 35 (empty -> .)
+    FOR_KEYWORD     reduce using rule 35 (empty -> .)
 
-    instruction_iterator           shift and go to state 57
+    instruction_iterator           shift and go to state 58
     empty                          shift and go to state 3
-
-state 44
-
-    (33) coordinates -> LPAREN value . COMMA value RPAREN
-
-    COMMA           shift and go to state 58
-
 
 state 45
 
-    (24) value -> NUMBER .
+    (34) coordinates -> LPAREN value . COMMA value RPAREN
 
-    COMMA           reduce using rule 24 (value -> NUMBER .)
-    RSQUAREPAREN    reduce using rule 24 (value -> NUMBER .)
-    RPAREN          reduce using rule 24 (value -> NUMBER .)
+    COMMA           shift and go to state 59
 
 
 state 46
 
-    (25) value -> STRING .
+    (25) value -> NUMBER .
 
-    COMMA           reduce using rule 25 (value -> STRING .)
-    RSQUAREPAREN    reduce using rule 25 (value -> STRING .)
-    RPAREN          reduce using rule 25 (value -> STRING .)
+    COMMA           reduce using rule 25 (value -> NUMBER .)
+    RSQUAREPAREN    reduce using rule 25 (value -> NUMBER .)
+    RPAREN          reduce using rule 25 (value -> NUMBER .)
 
 
 state 47
 
-    (26) value -> list .
+    (26) value -> STRING .
 
-    COMMA           reduce using rule 26 (value -> list .)
-    RSQUAREPAREN    reduce using rule 26 (value -> list .)
-    RPAREN          reduce using rule 26 (value -> list .)
+    COMMA           reduce using rule 26 (value -> STRING .)
+    RSQUAREPAREN    reduce using rule 26 (value -> STRING .)
+    RPAREN          reduce using rule 26 (value -> STRING .)
 
 
 state 48
 
-    (27) value -> coordinates .
+    (27) value -> list .
 
-    COMMA           reduce using rule 27 (value -> coordinates .)
-    RSQUAREPAREN    reduce using rule 27 (value -> coordinates .)
-    RPAREN          reduce using rule 27 (value -> coordinates .)
+    COMMA           reduce using rule 27 (value -> list .)
+    RSQUAREPAREN    reduce using rule 27 (value -> list .)
+    RPAREN          reduce using rule 27 (value -> list .)
 
 
 state 49
 
-    (28) value -> VARNAME_ARGNAME .
+    (28) value -> coordinates .
 
-    COMMA           reduce using rule 28 (value -> VARNAME_ARGNAME .)
-    RSQUAREPAREN    reduce using rule 28 (value -> VARNAME_ARGNAME .)
-    RPAREN          reduce using rule 28 (value -> VARNAME_ARGNAME .)
+    COMMA           reduce using rule 28 (value -> coordinates .)
+    RSQUAREPAREN    reduce using rule 28 (value -> coordinates .)
+    RPAREN          reduce using rule 28 (value -> coordinates .)
 
 
 state 50
 
-    (29) list -> LSQUAREPAREN . list_item_iterator RSQUAREPAREN
-    (30) list_item_iterator -> . value
-    (31) list_item_iterator -> . list_item_iterator COMMA value
-    (32) list_item_iterator -> . empty
-    (24) value -> . NUMBER
-    (25) value -> . STRING
-    (26) value -> . list
-    (27) value -> . coordinates
-    (28) value -> . VARNAME_ARGNAME
-    (34) empty -> .
-    (29) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
+    (29) value -> VARNAME_ARGNAME .
 
-    NUMBER          shift and go to state 45
-    STRING          shift and go to state 46
-    VARNAME_ARGNAME shift and go to state 49
-    RSQUAREPAREN    reduce using rule 34 (empty -> .)
-    COMMA           reduce using rule 34 (empty -> .)
-    LSQUAREPAREN    shift and go to state 50
-    LPAREN          shift and go to state 30
+    COMMA           reduce using rule 29 (value -> VARNAME_ARGNAME .)
+    RSQUAREPAREN    reduce using rule 29 (value -> VARNAME_ARGNAME .)
+    RPAREN          reduce using rule 29 (value -> VARNAME_ARGNAME .)
 
-    list_item_iterator             shift and go to state 59
-    value                          shift and go to state 60
-    empty                          shift and go to state 61
-    list                           shift and go to state 47
-    coordinates                    shift and go to state 48
 
 state 51
 
-    (5) instruction -> PLACE_KEYWORD type construction_arguments ON_KEYWORD VARNAME_ARGNAME . coordinates
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
+    (30) list -> LSQUAREPAREN . list_item_iterator RSQUAREPAREN
+    (31) list_item_iterator -> . value
+    (32) list_item_iterator -> . list_item_iterator COMMA value
+    (33) list_item_iterator -> . empty
+    (25) value -> . NUMBER
+    (26) value -> . STRING
+    (27) value -> . list
+    (28) value -> . coordinates
+    (29) value -> . VARNAME_ARGNAME
+    (35) empty -> .
+    (30) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
 
-    LPAREN          shift and go to state 30
+    NUMBER          shift and go to state 46
+    STRING          shift and go to state 47
+    VARNAME_ARGNAME shift and go to state 50
+    RSQUAREPAREN    reduce using rule 35 (empty -> .)
+    COMMA           reduce using rule 35 (empty -> .)
+    LSQUAREPAREN    shift and go to state 51
+    LPAREN          shift and go to state 31
 
-    coordinates                    shift and go to state 62
+    list_item_iterator             shift and go to state 60
+    value                          shift and go to state 61
+    empty                          shift and go to state 62
+    list                           shift and go to state 48
+    coordinates                    shift and go to state 49
 
 state 52
 
-    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD . VARNAME_ARGNAME coordinates
+    (5) instruction -> PLACE_KEYWORD type construction_arguments ON_KEYWORD VARNAME_ARGNAME . coordinates
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
 
-    VARNAME_ARGNAME shift and go to state 63
+    LPAREN          shift and go to state 31
 
+    coordinates                    shift and go to state 63
 
 state 53
 
-    (19) construction_arguments -> LPAREN argument_iterator RPAREN .
+    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD . VARNAME_ARGNAME coordinates
 
-    ON_KEYWORD      reduce using rule 19 (construction_arguments -> LPAREN argument_iterator RPAREN .)
-    NEWLINE         reduce using rule 19 (construction_arguments -> LPAREN argument_iterator RPAREN .)
+    VARNAME_ARGNAME shift and go to state 64
 
 
 state 54
 
-    (21) argument_iterator -> argument_iterator COMMA . argument
-    (23) argument -> . VARNAME_ARGNAME COLON value
+    (20) construction_arguments -> LPAREN argument_iterator RPAREN .
 
-    VARNAME_ARGNAME shift and go to state 37
+    ON_KEYWORD      reduce using rule 20 (construction_arguments -> LPAREN argument_iterator RPAREN .)
+    NEWLINE         reduce using rule 20 (construction_arguments -> LPAREN argument_iterator RPAREN .)
 
-    argument                       shift and go to state 64
 
 state 55
 
-    (23) argument -> VARNAME_ARGNAME COLON . value
-    (24) value -> . NUMBER
-    (25) value -> . STRING
-    (26) value -> . list
-    (27) value -> . coordinates
-    (28) value -> . VARNAME_ARGNAME
-    (29) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
+    (22) argument_iterator -> argument_iterator COMMA . argument
+    (24) argument -> . VARNAME_ARGNAME COLON value
 
-    NUMBER          shift and go to state 45
-    STRING          shift and go to state 46
-    VARNAME_ARGNAME shift and go to state 49
-    LSQUAREPAREN    shift and go to state 50
-    LPAREN          shift and go to state 30
+    VARNAME_ARGNAME shift and go to state 38
 
-    value                          shift and go to state 65
-    list                           shift and go to state 47
-    coordinates                    shift and go to state 48
+    argument                       shift and go to state 65
 
 state 56
+
+    (24) argument -> VARNAME_ARGNAME COLON . value
+    (25) value -> . NUMBER
+    (26) value -> . STRING
+    (27) value -> . list
+    (28) value -> . coordinates
+    (29) value -> . VARNAME_ARGNAME
+    (30) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
+
+    NUMBER          shift and go to state 46
+    STRING          shift and go to state 47
+    VARNAME_ARGNAME shift and go to state 50
+    LSQUAREPAREN    shift and go to state 51
+    LPAREN          shift and go to state 31
+
+    value                          shift and go to state 66
+    list                           shift and go to state 48
+    coordinates                    shift and go to state 49
+
+state 57
 
     (7) instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD VARNAME_ARGNAME coordinates .
 
     NEWLINE         reduce using rule 7 (instruction -> PLACE_KEYWORD VARNAME_ARGNAME ON_KEYWORD VARNAME_ARGNAME coordinates .)
 
 
-state 57
+state 58
 
     (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator . ENDFOR_KEYWORD
     (2) instruction_iterator -> instruction_iterator . instruction NEWLINE
@@ -671,7 +685,7 @@ state 57
     (8) instruction -> . RENDER_KEYWORD VARNAME_ARGNAME optional_render_string optional_coordinates
     (9) instruction -> . FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD
 
-    ENDFOR_KEYWORD  shift and go to state 66
+    ENDFOR_KEYWORD  shift and go to state 67
     CREATE_KEYWORD  shift and go to state 6
     PLACE_KEYWORD   shift and go to state 7
     RENDER_KEYWORD  shift and go to state 8
@@ -679,149 +693,149 @@ state 57
 
     instruction                    shift and go to state 5
 
-state 58
-
-    (33) coordinates -> LPAREN value COMMA . value RPAREN
-    (24) value -> . NUMBER
-    (25) value -> . STRING
-    (26) value -> . list
-    (27) value -> . coordinates
-    (28) value -> . VARNAME_ARGNAME
-    (29) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
-
-    NUMBER          shift and go to state 45
-    STRING          shift and go to state 46
-    VARNAME_ARGNAME shift and go to state 49
-    LSQUAREPAREN    shift and go to state 50
-    LPAREN          shift and go to state 30
-
-    value                          shift and go to state 67
-    list                           shift and go to state 47
-    coordinates                    shift and go to state 48
-
 state 59
 
-    (29) list -> LSQUAREPAREN list_item_iterator . RSQUAREPAREN
-    (31) list_item_iterator -> list_item_iterator . COMMA value
+    (34) coordinates -> LPAREN value COMMA . value RPAREN
+    (25) value -> . NUMBER
+    (26) value -> . STRING
+    (27) value -> . list
+    (28) value -> . coordinates
+    (29) value -> . VARNAME_ARGNAME
+    (30) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
 
-    RSQUAREPAREN    shift and go to state 68
-    COMMA           shift and go to state 69
+    NUMBER          shift and go to state 46
+    STRING          shift and go to state 47
+    VARNAME_ARGNAME shift and go to state 50
+    LSQUAREPAREN    shift and go to state 51
+    LPAREN          shift and go to state 31
 
+    value                          shift and go to state 68
+    list                           shift and go to state 48
+    coordinates                    shift and go to state 49
 
 state 60
 
-    (30) list_item_iterator -> value .
+    (30) list -> LSQUAREPAREN list_item_iterator . RSQUAREPAREN
+    (32) list_item_iterator -> list_item_iterator . COMMA value
 
-    RSQUAREPAREN    reduce using rule 30 (list_item_iterator -> value .)
-    COMMA           reduce using rule 30 (list_item_iterator -> value .)
+    RSQUAREPAREN    shift and go to state 69
+    COMMA           shift and go to state 70
 
 
 state 61
 
-    (32) list_item_iterator -> empty .
+    (31) list_item_iterator -> value .
 
-    RSQUAREPAREN    reduce using rule 32 (list_item_iterator -> empty .)
-    COMMA           reduce using rule 32 (list_item_iterator -> empty .)
+    RSQUAREPAREN    reduce using rule 31 (list_item_iterator -> value .)
+    COMMA           reduce using rule 31 (list_item_iterator -> value .)
 
 
 state 62
+
+    (33) list_item_iterator -> empty .
+
+    RSQUAREPAREN    reduce using rule 33 (list_item_iterator -> empty .)
+    COMMA           reduce using rule 33 (list_item_iterator -> empty .)
+
+
+state 63
 
     (5) instruction -> PLACE_KEYWORD type construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates .
 
     NEWLINE         reduce using rule 5 (instruction -> PLACE_KEYWORD type construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates .)
 
 
-state 63
-
-    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME . coordinates
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
-
-    LPAREN          shift and go to state 30
-
-    coordinates                    shift and go to state 70
-
 state 64
 
-    (21) argument_iterator -> argument_iterator COMMA argument .
+    (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME . coordinates
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
 
-    RPAREN          reduce using rule 21 (argument_iterator -> argument_iterator COMMA argument .)
-    COMMA           reduce using rule 21 (argument_iterator -> argument_iterator COMMA argument .)
+    LPAREN          shift and go to state 31
 
+    coordinates                    shift and go to state 71
 
 state 65
 
-    (23) argument -> VARNAME_ARGNAME COLON value .
+    (22) argument_iterator -> argument_iterator COMMA argument .
 
-    RPAREN          reduce using rule 23 (argument -> VARNAME_ARGNAME COLON value .)
-    COMMA           reduce using rule 23 (argument -> VARNAME_ARGNAME COLON value .)
+    RPAREN          reduce using rule 22 (argument_iterator -> argument_iterator COMMA argument .)
+    COMMA           reduce using rule 22 (argument_iterator -> argument_iterator COMMA argument .)
 
 
 state 66
+
+    (24) argument -> VARNAME_ARGNAME COLON value .
+
+    RPAREN          reduce using rule 24 (argument -> VARNAME_ARGNAME COLON value .)
+    COMMA           reduce using rule 24 (argument -> VARNAME_ARGNAME COLON value .)
+
+
+state 67
 
     (9) instruction -> FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD .
 
     NEWLINE         reduce using rule 9 (instruction -> FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD .)
 
 
-state 67
-
-    (33) coordinates -> LPAREN value COMMA value . RPAREN
-
-    RPAREN          shift and go to state 71
-
-
 state 68
 
-    (29) list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .
+    (34) coordinates -> LPAREN value COMMA value . RPAREN
 
-    COMMA           reduce using rule 29 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
-    RSQUAREPAREN    reduce using rule 29 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
-    RPAREN          reduce using rule 29 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
+    RPAREN          shift and go to state 72
 
 
 state 69
 
-    (31) list_item_iterator -> list_item_iterator COMMA . value
-    (24) value -> . NUMBER
-    (25) value -> . STRING
-    (26) value -> . list
-    (27) value -> . coordinates
-    (28) value -> . VARNAME_ARGNAME
-    (29) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
-    (33) coordinates -> . LPAREN value COMMA value RPAREN
+    (30) list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .
 
-    NUMBER          shift and go to state 45
-    STRING          shift and go to state 46
-    VARNAME_ARGNAME shift and go to state 49
-    LSQUAREPAREN    shift and go to state 50
-    LPAREN          shift and go to state 30
+    COMMA           reduce using rule 30 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
+    RSQUAREPAREN    reduce using rule 30 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
+    RPAREN          reduce using rule 30 (list -> LSQUAREPAREN list_item_iterator RSQUAREPAREN .)
 
-    value                          shift and go to state 72
-    list                           shift and go to state 47
-    coordinates                    shift and go to state 48
 
 state 70
+
+    (32) list_item_iterator -> list_item_iterator COMMA . value
+    (25) value -> . NUMBER
+    (26) value -> . STRING
+    (27) value -> . list
+    (28) value -> . coordinates
+    (29) value -> . VARNAME_ARGNAME
+    (30) list -> . LSQUAREPAREN list_item_iterator RSQUAREPAREN
+    (34) coordinates -> . LPAREN value COMMA value RPAREN
+
+    NUMBER          shift and go to state 46
+    STRING          shift and go to state 47
+    VARNAME_ARGNAME shift and go to state 50
+    LSQUAREPAREN    shift and go to state 51
+    LPAREN          shift and go to state 31
+
+    value                          shift and go to state 73
+    list                           shift and go to state 48
+    coordinates                    shift and go to state 49
+
+state 71
 
     (6) instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates .
 
     NEWLINE         reduce using rule 6 (instruction -> PLACE_KEYWORD type VARNAME_ARGNAME construction_arguments ON_KEYWORD VARNAME_ARGNAME coordinates .)
 
 
-state 71
-
-    (33) coordinates -> LPAREN value COMMA value RPAREN .
-
-    NEWLINE         reduce using rule 33 (coordinates -> LPAREN value COMMA value RPAREN .)
-    COMMA           reduce using rule 33 (coordinates -> LPAREN value COMMA value RPAREN .)
-    RSQUAREPAREN    reduce using rule 33 (coordinates -> LPAREN value COMMA value RPAREN .)
-    RPAREN          reduce using rule 33 (coordinates -> LPAREN value COMMA value RPAREN .)
-
-
 state 72
 
-    (31) list_item_iterator -> list_item_iterator COMMA value .
+    (34) coordinates -> LPAREN value COMMA value RPAREN .
 
-    RSQUAREPAREN    reduce using rule 31 (list_item_iterator -> list_item_iterator COMMA value .)
-    COMMA           reduce using rule 31 (list_item_iterator -> list_item_iterator COMMA value .)
+    NEWLINE         reduce using rule 34 (coordinates -> LPAREN value COMMA value RPAREN .)
+    COMMA           reduce using rule 34 (coordinates -> LPAREN value COMMA value RPAREN .)
+    RSQUAREPAREN    reduce using rule 34 (coordinates -> LPAREN value COMMA value RPAREN .)
+    RPAREN          reduce using rule 34 (coordinates -> LPAREN value COMMA value RPAREN .)
+
+
+state 73
+
+    (32) list_item_iterator -> list_item_iterator COMMA value .
+
+    RSQUAREPAREN    reduce using rule 32 (list_item_iterator -> list_item_iterator COMMA value .)
+    COMMA           reduce using rule 32 (list_item_iterator -> list_item_iterator COMMA value .)
 

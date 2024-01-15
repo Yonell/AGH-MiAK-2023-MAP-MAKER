@@ -10,6 +10,7 @@ reserved = {
     'city' : 'CITY_KEYWORD',
     'road' : 'ROAD_KEYWORD',
     'river' : 'RIVER_KEYWORD',
+    'mountain' : 'MOUNTAIN_KEYWORD',
     'for' : 'FOR_KEYWORD',
     'endfor' : 'ENDFOR_KEYWORD',
     'EOF' : 'EOF',
