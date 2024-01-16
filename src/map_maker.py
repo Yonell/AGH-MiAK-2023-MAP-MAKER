@@ -64,35 +64,59 @@ class Mountain:
     def __repr__(self):
         return str(self)
 
+class Forest:
+    def __init__(self):
+        pass
+    def __str__(self):
+        return f'Forest'
+    def __repr__(self):
+        return str(self)
+
 
 names = []
 global_objects = {}
+types = ["map", "road", "river", "city", "mountain", "forest", "terrain"]
 
 def execute(list_of_instructions, local_objects = {}):
+    line = -1
     for instruction in list_of_instructions:
-        if instruction[0] == "create":
+        line += 1
+        if instruction[0] == "create": #(flag, type, name, args)
+            if instruction[1] not in types:
+                raise Exception("Unknown type: ", instruction[1], " in line: ", line)
             if instruction[2] in names:
-                raise Exception("Name already taken")
+                raise Exception("Name already taken. Line: ", line)
             else:
-                if instruction[1] == "map":
-                    global_objects[instruction[2]] = Map(instruction[3]['width'], instruction[3]['height'], instruction[3]['base'])
-                elif instruction[1] == "road":
-                    global_objects[instruction[2]] = Road()
-                elif instruction[1] == "river":
-                    global_objects[instruction[2]] = River()
-                elif instruction[1] == "city":
-                    global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
-                elif instruction[1] == "mountain":
-                    global_objects[instruction[2]] = Mountain()
-                elif instruction[1] == "terrain":
-                    global_objects[instruction[2]] = Terrain(instruction[3]['base'])
-                else:
-                    raise Exception("Unknown type")
+                try:
+                    if instruction[1] == "map":
+                        global_objects[instruction[2]] = Map(instruction[3]['width'], instruction[3]['height'], instruction[3]['base'])
+                    elif instruction[1] == "road":
+                        global_objects[instruction[2]] = Road()
+                    elif instruction[1] == "river":
+                        global_objects[instruction[2]] = River()
+                    elif instruction[1] == "city":
+                        global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
+                    elif instruction[1] == "mountain":
+                        global_objects[instruction[2]] = Mountain()
+                    elif instruction[1] == "forest":
+                        global_objects[instruction[2]] = Forest()
+                    elif instruction[1] == "terrain":
+                        global_objects[instruction[2]] = Terrain(instruction[3]['base'])
+                    else:
+                        raise Exception("Unknown type: ", instruction[1], " in line: ", line)
+                except KeyError as e:
+                    missing = e.args[0]
+                    raise Exception("Missing arguments: ", missing, " in line: ", line)
+
                 names.append(instruction[2])
 
-        elif instruction[0] == "place_new_unnamed":
+        elif instruction[0] == "place_new_unnamed": #(flag, type, args, mapname, coordinates)
             if instruction[3] not in names:
-                raise Exception("Name not found")
+                raise Exception("Name not found: ", instruction[3], " in line: ", line)
+            if type(global_objects[instruction[3]]) != Map:
+                raise Exception("Object is not a map: ", instruction[3], " in line: ", line)
+            if instruction[1] not in types:
+                raise Exception("Unknown type: ", instruction[1], " in line: ", line)
             else:
                 x_coord = instruction[4][0]
                 y_coord = instruction[4][1]
@@ -107,23 +131,36 @@ def execute(list_of_instructions, local_objects = {}):
                         if y_coord == None:
                             y_coord = global_objects[y_coord[1]]
 
-                if instruction[1] == "road":
-                    global_objects[instruction[3]].add_object(Road(), x_coord, y_coord)
-                elif instruction[1] == "river":
-                    global_objects[instruction[3]].add_object(River(), x_coord, y_coord)
-                elif instruction[1] == "mountain":
-                    global_objects[instruction[3]].add_object(Mountain(), x_coord, y_coord)
-                elif instruction[1] == "city":
-                    global_objects[instruction[3]].add_object(City(None, instruction[2]['size']), x_coord, y_coord)
-                elif instruction[1] == "terrain":
-                    global_objects[instruction[3]].edit_terrain(x_coord, y_coord, Terrain(instruction[2]['base']))
-                else:
-                    raise Exception("Unknown type")
+                if x_coord >= global_objects[instruction[3]].width \
+                    or y_coord >= global_objects[instruction[3]].height\
+                        or x_coord < 0\
+                            or y_coord < 0:
+                    raise Exception("Out of bounds: ", instruction[3], " in line: ", line, ". Map size: ", global_objects[instruction[3]].width, ",", global_objects[instruction[3]].height)
+                try:
+                    if instruction[1] == "road":
+                        global_objects[instruction[3]].add_object(Road(), x_coord, y_coord)
+                    elif instruction[1] == "river":
+                        global_objects[instruction[3]].add_object(River(), x_coord, y_coord)
+                    elif instruction[1] == "mountain":
+                        global_objects[instruction[3]].add_object(Mountain(), x_coord, y_coord)
+                    elif instruction[1] == "forest":
+                        global_objects[instruction[3]].add_object(Forest(), x_coord, y_coord)
+                    elif instruction[1] == "city":
+                        global_objects[instruction[3]].add_object(City(None, instruction[2]['size']), x_coord, y_coord)
+                    elif instruction[1] == "terrain":
+                        global_objects[instruction[3]].edit_terrain(x_coord, y_coord, Terrain(instruction[2]['base']))
+                    else:
+                        raise Exception("Unknown type: ", instruction[1], " in line: ", line)
+                except KeyError as e:
+                    missing = e.args[0]
+                    raise Exception("Missing arguments: ", missing, " in line: ", line)
         elif instruction[0] == "place_new_named":  #(flag, type, name, args, mapname, coordinates)
             if instruction[2] in names:
                 raise Exception("Name already taken")
             elif instruction[4] not in names:
                 raise Exception("Map name not found")
+            elif type(global_objects[instruction[4]]) != Map:
+                raise Exception("Object is not a map: ", instruction[4], " in line: ", line)
             else:
                 x_coord = instruction[5][0]
                 y_coord = instruction[5][1]
@@ -138,33 +175,48 @@ def execute(list_of_instructions, local_objects = {}):
                         if y_coord == None:
                             y_coord = global_objects[y_coord[1]]
 
-                if instruction[1] == "road":
-                    global_objects[instruction[2]] = Road()
-                    names.append(instruction[2])
-                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
-                elif instruction[1] == "river":
-                    global_objects[instruction[2]] = River()
-                    names.append(instruction[2])
-                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
-                elif instruction[1] == "mountain":
-                    global_objects[instruction[2]] = Mountain()
-                    names.append(instruction[2])
-                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
-                elif instruction[1] == "city":
-                    global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
-                    names.append(instruction[2])
-                    global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
-                elif instruction[1] == "terrain":
-                    global_objects[instruction[2]] = Terrain(instruction[3]['base'])
-                    names.append(instruction[2])
-                    global_objects[instruction[4]].terrain[x_coord][y_coord] = global_objects[instruction[2]]
-                else:
-                    raise Exception("Unknown type")
+                if x_coord >= global_objects[instruction[4]].width \
+                    or y_coord >= global_objects[instruction[4]].height\
+                        or x_coord < 0\
+                            or y_coord < 0:
+                    raise Exception("Out of bounds: ", instruction[4], " in line: ", line, ". Map size: ", global_objects[instruction[4]].width, ",", global_objects[instruction[4]].height)
+                try:
+                    if instruction[1] == "road":
+                        global_objects[instruction[2]] = Road()
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
+                    elif instruction[1] == "river":
+                        global_objects[instruction[2]] = River()
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
+                    elif instruction[1] == "mountain":
+                        global_objects[instruction[2]] = Mountain()
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
+                    elif instruction[1] == "forest":
+                        global_objects[instruction[2]] = Forest()
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
+                    elif instruction[1] == "city":
+                        global_objects[instruction[2]] = City(instruction[2], instruction[3]['size'])
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].add_object(global_objects[instruction[2]], x_coord, y_coord)
+                    elif instruction[1] == "terrain":
+                        global_objects[instruction[2]] = Terrain(instruction[3]['base'])
+                        names.append(instruction[2])
+                        global_objects[instruction[4]].terrain[x_coord][y_coord] = global_objects[instruction[2]]
+                    else:
+                        raise Exception("Unknown type")
+                except KeyError as e:
+                    missing = e.args[0]
+                    raise Exception("Missing arguments: ", missing, " in line: ", line)
         elif instruction[0] == "place_existing": #(flag, name, mapname, coordinates)
             if instruction[1] not in names:
                 raise Exception("Name not found")
             elif instruction[2] not in names:
                 raise Exception("Map name not found")
+            elif type(global_objects[instruction[2]]) != Map:
+                raise Exception("Object is not a map: ", instruction[2], " in line: ", line)
             else:
                 x_coord = instruction[3][0]
                 y_coord = instruction[3][1]
@@ -178,6 +230,12 @@ def execute(list_of_instructions, local_objects = {}):
                         y_coord = local_objects[y_coord[1]]
                         if y_coord == None:
                             y_coord = global_objects[y_coord[1]]
+
+                if x_coord >= global_objects[instruction[2]].width \
+                    or y_coord >= global_objects[instruction[2]].height\
+                        or x_coord < 0\
+                            or y_coord < 0:
+                    raise Exception("Out of bounds: ", instruction[2], " in line: ", line, ". Map size: ", global_objects[instruction[2]].width, ",", global_objects[instruction[2]].height)
 
                 if type(global_objects[instruction[1]]) == Terrain:
                     global_objects[instruction[2]].edit_terrain(x_coord, y_coord, global_objects[instruction[1]].base)
@@ -195,6 +253,36 @@ def execute(list_of_instructions, local_objects = {}):
             render(instruction[1], instruction[2], instruction[3])
         elif instruction[0] == "for":
             execute_for_loop(instruction[3], instruction[1], instruction[2][0], instruction[2][1], local_objects)
+        elif instruction[0] == "remove":    #(flag, type, mapname, coordinates)
+            if instruction[2] not in names:
+                raise Exception("Map name not found")
+            map = global_objects[instruction[2]]
+            x_coord = instruction[3][0]
+            y_coord = instruction[3][1]
+            if type(x_coord) == tuple:
+                if x_coord[0] == "varname":
+                    x_coord = local_objects[x_coord[1]]
+                    if x_coord == None:
+                        x_coord = global_objects[x_coord[1]]
+            if type(y_coord) == tuple:
+                if y_coord[0] == "varname":
+                    y_coord = local_objects[y_coord[1]]
+                    if y_coord == None:
+                        y_coord = global_objects[y_coord[1]]
+            if instruction[1] == "road":
+                type_to_remove = Road
+            elif instruction[1] == "river":
+                type_to_remove = River
+            elif instruction[1] == "mountain":
+                type_to_remove = Mountain
+            elif instruction[1] == "forest":
+                type_to_remove = Forest
+            elif instruction[1] == "city":
+                type_to_remove = City
+
+            for k in range(len(map.objects[x_coord][y_coord])):
+                while k != len(map.objects[x_coord][y_coord]) and type(map.objects[x_coord][y_coord][k]) == type_to_remove:
+                    map.objects[x_coord][y_coord].remove(map.objects[x_coord][y_coord][k])
     pass
 
 def execute_for_loop(list_of_instructions, varname, start, stop, local_objects):
@@ -209,6 +297,10 @@ def execute_for_loop(list_of_instructions, varname, start, stop, local_objects):
     pass
 
 def render(mapname, renderstring, coords):
+    if mapname not in names:
+        raise Exception("Map name not found: ", mapname)
+    elif type(global_objects[mapname]) != Map:
+        raise Exception("Object is not a map: ", mapname)
     if renderstring is None:
         renderstring = "/.tmp/output.png"
     map = global_objects[mapname]
@@ -220,6 +312,7 @@ def render(mapname, renderstring, coords):
     road_alpha = pil_image.open("./img/RoadAlpha.png")
     road_isolated_alpha = pil_image.open("./img/RoadIsolatedAlpha.png")
     mountain_sprite = pil_image.open("./img/Mountain.png")
+    forest_sprite = pil_image.open("./img/ForestAlpha.png")
     city_sprites = {
         'big': pil_image.open("./img/BigCity.png"),
         'medium': pil_image.open("./img/MediumCity.png"),
@@ -312,6 +405,15 @@ def render(mapname, renderstring, coords):
                 text_coords = (city_coords[0]+139, city_coords[1]+187)
                 draw.text(text_coords, city_name, (0, 0, 0), font=font_city, align="center", anchor="mm")
 
+            is_forest = False
+            for obj in map.objects[i][j]:
+                if type(obj) == Forest:
+                    is_forest = True
+                    break
+
+            if is_forest:
+                output_sprite.paste(forest_sprite, calc_position(i, j, x_size, y_size), forest_sprite)
+
 
 
             textpos = calc_position(i, j, x_size, y_size)
@@ -401,6 +503,15 @@ def p_instruction_render(p):                                                    
     p[0].append(p[4])
     pass
 
+def p_instruction_remove(p):                                                        #(flag, type, renderstring, coordinates)
+    '''instruction : REMOVE_KEYWORD type FROM_KEYWORD VARNAME_ARGNAME coordinates'''
+    p[0] = []
+    p[0].append("remove")
+    p[0].append(p[2])
+    p[0].append(p[4])
+    p[0].append(p[5])
+    pass
+
 
 def p_instruction_for(p):                                                        #(flag, variable, range, instructions)
     '''instruction : FOR_KEYWORD VARNAME_ARGNAME coordinates NEWLINE instruction_iterator ENDFOR_KEYWORD'''
@@ -438,7 +549,8 @@ def p_type(p):
             | CITY_KEYWORD
             | ROAD_KEYWORD
             | RIVER_KEYWORD
-            | MOUNTAIN_KEYWORD'''
+            | MOUNTAIN_KEYWORD
+            | FOREST_KEYWORD'''
     p[0] = p[1]
     pass
 

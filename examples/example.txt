@@ -97,5 +97,32 @@ Place mountain () on myMap2 (12,8)
 for i (7,9)
     Place mountain () on myMap2 (13,i)
 endfor
+Place forest () on myMap2 (5,4)
+Place forest () on myMap2 (6,5)
+Place forest () on myMap2 (4,3)
+Place forest () on myMap2 (5,2)
+for i (2,4)
+    Place forest () on myMap2 (i,4)
+endfor
+for i (2,5)
+    for j (10,12)
+        Place forest () on myMap2 (i,j)
+    endfor
+endfor
+Place forest () on myMap2 (4,12)
+for i (0,2)
+    Place road () on myMap2 (15,i)
+endfor
+for i (2,5)
+    Place road () on myMap2 (16,i)
+endfor
+for i (2,5)
+    Place road () on myMap2 (16,i)
+endfor
+for i (4,7)
+    Place road () on myMap2 (17,i)
+endfor
+Place mountain () on myMap2 (8,5)
+Remove mountain from myMap2 (8,5)
 Render myMap2 as "./outputs/mymap.png"
 EOF
