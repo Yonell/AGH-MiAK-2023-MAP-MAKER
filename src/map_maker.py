@@ -76,6 +76,7 @@ class Forest:
 names = []
 global_objects = {}
 types = ["map", "road", "river", "city", "mountain", "forest", "terrain"]
+override_automatically = False
 
 def execute(list_of_instructions, local_objects = {}):
     line = -1
@@ -299,8 +300,14 @@ def execute_for_loop(list_of_instructions, varname, start, stop, local_objects):
 def render(mapname, renderstring, coords):
     if mapname not in names:
         raise Exception("Map name not found: ", mapname)
-    elif type(global_objects[mapname]) != Map:
+    if type(global_objects[mapname]) != Map:
         raise Exception("Object is not a map: ", mapname)
+    if os.path.exists(renderstring) and override_automatically == False:
+        reply = input("File already exists. Overwrite? (y/n)")
+        if reply != "y":
+            return
+    if not os.path.exists("./img/"):
+        raise Exception("Image folder not found")
     if renderstring is None:
         renderstring = "/.tmp/output.png"
     map = global_objects[mapname]
@@ -434,8 +441,12 @@ def calc_position(x_on_map, y_on_map, maxx, maxy):
 
 def p_start(p):
     '''start : instruction_iterator EOF'''
-    execute(p[1])
-    p[0] = True
+    try:
+        execute(p[1])
+        p[0] = True
+    except Exception as e:
+        print(e)
+        p[0] = False
 
 
 def p_instruction_iterator(p):
@@ -633,34 +644,37 @@ def p_error(p):
     print(p)
     pass
 
-
-if __name__ == '__main__':
-    '''
-    data = \
-        "Create map myMap (width: 18, height: 21, base: \"water\")\n\
-        Create map myMap2 (width: 8, height: 2, base: \"grass\")\n\
-        Place terrain (base: \"grass\") on myMap2 (4, 1)\n\
-        Place mountain () on myMap2 (4, 1)\n\
-        Create city myCity (size: \"small\")\n\
-        Place myCity on myMap (3, 1)\n\
-        Place road () on myMap2 (7,0)\n\
-        for i (0, 4)\n\
-            for j (0, 7)\n \
-                Place road () on myMap (i,j)\n\
-            endfor\n\
-        endfor\n\
-        Create road myRoad ()\n\
-        Place myRoad on myMap2 (0,0)\n\
-        Place myMap2 on myMap (1,2)\n\
-        Render myMap as \"./mymap.png\" (1920,1080)\n\
-        EOF"
-    #data = "Create city myCity (size: \"small\")\n\
-           #EOF"
-    #data = "EOF"'''
-    filename = sys.argv[1]
-    print("Parsing file: " + filename)
+def parse_filename(filename):
+    if os.path.exists(filename) == False:
+        print("File " + filename + " does not exist")
+        return False
     data = open(filename, "r").read()
-
     parser = yacc.yacc()
     result = parser.parse(data)
-    print("Map created successfully!")
+    return result
+
+
+if __name__ == '__main__':
+    if pil_image.__version__ not in [ "10.1.0", "10.2.0" ]:
+        print("PIL version is " + pil_image.__version__ + ", but should be 10.1.0 or 10.2.0")
+        sys.exit(1)
+    if len(sys.argv) < 2:
+        filename = input("Filename not provided. Enter one: ")
+        if(parse_filename(filename) == False):
+            print("Error parsing file")
+            sys.exit(1)
+        else:
+            print("File parsed successfully")
+            sys.exit(0)
+    else:
+        for filename in sys.argv[1:]:
+            if filename == "-y":
+                override_automatically = True
+                continue
+            if(parse_filename(filename) == False):
+                print("Error parsing file")
+                sys.exit(1)
+            else:
+                print("File parsed successfully")
+                sys.exit(0)
+
